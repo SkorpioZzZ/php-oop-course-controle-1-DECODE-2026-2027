@@ -70,7 +70,17 @@ class Router {
     }
 
     private function checkUri(Request $request, string $uri): bool {
-        return $request->getUri() === $uri;
+        // "/contact/{filename}" devient "#^/contact/(?<filename>[^/]+)$#"
+        $pattern = preg_replace('#\{(\w+)\}#', '(?<$1>[^/]+)', $uri);
+
+        if (preg_match('#^' . $pattern . '$#', $request->getPath(), $matches) !== 1) {
+            return false;
+        }
+
+        $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+        $request->setParams(array_map('urldecode', $params));
+
+        return true;
     }
     
     private function checkMethod(Request $request, string $method): bool {
