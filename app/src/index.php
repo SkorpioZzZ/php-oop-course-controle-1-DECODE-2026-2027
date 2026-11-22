@@ -8,7 +8,9 @@ use App\Http\Request;
 $request = new Request();
 
 $router = new Router();
-$router->main($request);
+$response = $router->main($request);
 
+http_response_code($response->statusCode);
+echo $response->content;
 
 ?>
