@@ -6,6 +6,7 @@ class Request {
     private readonly string $uri;
     private readonly string $method;
     private readonly array $headers;
+    private array $params = [];
 
     public function __construct()
     {
@@ -17,6 +18,11 @@ class Request {
     public function getUri(): string
     {
         return $this->uri;
+    }
+
+    public function getPath(): string
+    {
+        return parse_url($this->uri, PHP_URL_PATH) ?? '/';
     }
 
     public function getMethod(): string
@@ -44,5 +50,15 @@ class Request {
     public function getBody(): string
     {
         return file_get_contents('php://input');
+    }
+
+    public function setParams(array $params): void
+    {
+        $this->params = $params;
+    }
+
+    public function getParam(string $name): ?string
+    {
+        return $this->params[$name] ?? null;
     }
 }
