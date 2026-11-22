@@ -32,7 +32,9 @@ class UpdateContactController extends AbstractController {
         $contact = array_merge($contact, $data);
         $contact['dateOfLastUpdate'] = time();
 
-        $repository->save($filename, $contact);
+                if ($repository->save($filename, $contact) === false) {
+            return Response::error(500, 'Unable to save contact');
+        }
 
         return Response::json(200, $contact);
     }

@@ -31,7 +31,9 @@ class CreateContactController extends AbstractController {
         ];
 
         $filename = $now . '_' . $data['email'] . '.json';
-        (new ContactRepository())->save($filename, $contact);
+        if ((new ContactRepository())->save($filename, $contact) === false) {
+            return Response::error(500, 'Unable to save contact');
+        }
 
         return Response::json(201, ['file' => $filename]);
     }

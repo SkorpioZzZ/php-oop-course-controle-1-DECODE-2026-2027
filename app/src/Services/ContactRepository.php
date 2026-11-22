@@ -25,12 +25,18 @@ class ContactRepository {
         return json_decode(file_get_contents(self::STORAGE_PATH . $filename), true);
     }
 
-    public function save(string $filename, array $contact): void
+        public function save(string $filename, array $contact): bool
     {
-        file_put_contents(
-            self::STORAGE_PATH . $filename,
-            json_encode($contact, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
-        );
+        $path = self::STORAGE_PATH . $filename;
+
+        // Vérifie avant d'écrire : sinon PHP affiche un warning qui casse la réponse
+        if (is_writable(file_exists($path) ? $path : self::STORAGE_PATH) === false) {
+            return false;
+        }
+
+        $json = json_encode($contact, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+        return file_put_contents($path, $json) !== false;
     }
 
     public function delete(string $filename): bool
